@@ -2,6 +2,7 @@ package com.gustavostolze.picpay_desafio_backend.transaction;
 
 import org.springframework.stereotype.Service;
 
+import com.gustavostolze.picpay_desafio_backend.authorization.AuthorizationService;
 import com.gustavostolze.picpay_desafio_backend.wallet.Wallet;
 import com.gustavostolze.picpay_desafio_backend.wallet.WalletRepository;
 import com.gustavostolze.picpay_desafio_backend.wallet.WalletType;
@@ -11,10 +12,12 @@ public class TransactionService {
 
 	private final TransactionRepository transactionRepository;
 	private final WalletRepository walletRepository;
+	private final AuthorizationService authorizationService;
 
-	public TransactionService(TransactionRepository transactionRepository, WalletRepository walletRepository) {
+	public TransactionService(TransactionRepository transactionRepository, WalletRepository walletRepository, AuthorizationService authorizationService) {
 		this.transactionRepository = transactionRepository;
 		this.walletRepository = walletRepository;
+		this.authorizationService = authorizationService;
 	}
 
 	public Transaction create(Transaction transaction) {
@@ -37,6 +40,8 @@ public class TransactionService {
 
 		// call external services
 		// authorize
+		
+		authorizationService.authorize();
 
 		// notification
 
