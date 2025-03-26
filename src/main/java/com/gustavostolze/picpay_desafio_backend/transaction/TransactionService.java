@@ -27,6 +27,13 @@ public class TransactionService {
 		Transaction newTransaction = transactionRepository.save(transaction);
 
 		// debit and credit wallets
+		
+		Wallet payerWallet = walletRepository.findById(transaction.getPayer())
+			.get().debit(transaction.getValue());
+		Wallet payeeWallet = walletRepository.findById(transaction.getPayee())
+				.get().credit(transaction.getValue());
+		walletRepository.save(payerWallet);
+		walletRepository.save(payeeWallet);
 
 		// call external services
 		// authorize

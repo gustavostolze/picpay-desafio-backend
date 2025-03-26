@@ -77,6 +77,14 @@ public class Wallet {
 		this.email = email;
 	}
 	
+	public Wallet debit(BigDecimal value) {
+		return new Wallet(null, fullName, document, email, balance.subtract(value), type);
+	}
+	
+	public Wallet credit(BigDecimal value) {
+		return new Wallet(null, fullName, document, email, balance.add(value), type);
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
