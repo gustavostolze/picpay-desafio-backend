@@ -3,6 +3,7 @@ package com.gustavostolze.picpay_desafio_backend.transaction;
 import org.springframework.stereotype.Service;
 
 import com.gustavostolze.picpay_desafio_backend.authorization.AuthorizationService;
+import com.gustavostolze.picpay_desafio_backend.notification.NotificationService;
 import com.gustavostolze.picpay_desafio_backend.wallet.Wallet;
 import com.gustavostolze.picpay_desafio_backend.wallet.WalletRepository;
 import com.gustavostolze.picpay_desafio_backend.wallet.WalletType;
@@ -13,11 +14,14 @@ public class TransactionService {
 	private final TransactionRepository transactionRepository;
 	private final WalletRepository walletRepository;
 	private final AuthorizationService authorizationService;
+	private final NotificationService notificationService;
 
-	public TransactionService(TransactionRepository transactionRepository, WalletRepository walletRepository, AuthorizationService authorizationService) {
+	public TransactionService(TransactionRepository transactionRepository, WalletRepository walletRepository,
+			AuthorizationService authorizationService, NotificationService notificationService) {
 		this.transactionRepository = transactionRepository;
 		this.walletRepository = walletRepository;
 		this.authorizationService = authorizationService;
+		this.notificationService = notificationService;
 	}
 
 	public Transaction create(Transaction transaction) {
@@ -26,24 +30,24 @@ public class TransactionService {
 		validate(transaction);
 
 		// save transaction
-		
+
 		Transaction newTransaction = transactionRepository.save(transaction);
 
 		// debit and credit wallets
-		
-		Wallet payerWallet = walletRepository.findById(transaction.getPayer())
-			.get().debit(transaction.getValue());
-		Wallet payeeWallet = walletRepository.findById(transaction.getPayee())
-				.get().credit(transaction.getValue());
+
+		Wallet payerWallet = walletRepository.findById(transaction.getPayer()).get().debit(transaction.getValue());
+		Wallet payeeWallet = walletRepository.findById(transaction.getPayee()).get().credit(transaction.getValue());
 		walletRepository.save(payerWallet);
 		walletRepository.save(payeeWallet);
 
 		// call external services
-		// authorize
-		
+		// authorize sync
+
 		authorizationService.authorize();
 
-		// notification
+		// notification async with kafka
+
+		notificationService.notify(transaction);
 
 		return newTransaction;
 	}

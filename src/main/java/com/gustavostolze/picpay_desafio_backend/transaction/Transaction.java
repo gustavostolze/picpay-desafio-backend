@@ -86,5 +86,11 @@ public class Transaction {
 		Transaction other = (Transaction) obj;
 		return Objects.equals(id, other.id);
 	}
+
+	@Override
+	public String toString() {
+		return "Transaction [id=" + id + ", payer=" + payer + ", payee=" + payee + ", value=" + value + ", createdAt="
+				+ createdAt + "]";
+	}
 	
 }
