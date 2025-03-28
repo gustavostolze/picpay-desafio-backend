@@ -8,6 +8,8 @@ import com.gustavostolze.picpay_desafio_backend.wallet.Wallet;
 import com.gustavostolze.picpay_desafio_backend.wallet.WalletRepository;
 import com.gustavostolze.picpay_desafio_backend.wallet.WalletType;
 
+import java.util.List;
+
 @Service
 public class TransactionService {
 
@@ -47,9 +49,13 @@ public class TransactionService {
 
 		// notification async with kafka
 
-		notificationService.notify(transaction);
+		// notificationService.notify(transaction);
 
 		return newTransaction;
+	}
+
+	public List<Transaction> list() {
+		return transactionRepository.findAll();
 	}
 
 	// payer can not be payee
