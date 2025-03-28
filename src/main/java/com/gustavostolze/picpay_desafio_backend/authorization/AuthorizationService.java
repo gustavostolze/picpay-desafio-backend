@@ -1,7 +1,10 @@
 package com.gustavostolze.picpay_desafio_backend.authorization;
 
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+
+import java.util.Objects;
 
 @Service
 public class AuthorizationService {
@@ -14,13 +17,15 @@ public class AuthorizationService {
 	}
 
 	public void authorize() {
-		var response = restClient
+		var result = restClient
 				.get()
-				.retrieve()
+				.retrieve().onStatus(HttpStatusCode::isError, (request, response) -> {
+					System.out.println(response.getStatusCode() + " " + response.getStatusText());
+				})
 				.toEntity(Authorization.class);
-		
-		if (response.getStatusCode().isError() && !response.getBody().isAuthorize()) {
-			throw new UnauthorizeException("This transaction is unauthorized!");
+
+		if (result.getStatusCode().isError() && !Objects.requireNonNull(result.getBody()).isAuthorize()) {
+			throw new UnauthorizeException("Unauthorized transaction!! " + result.getBody());
 		}
 	}
 }
