@@ -49,7 +49,7 @@ public class TransactionService {
 
 		// notification async with kafka
 
-		// notificationService.notify(transaction);
+		notificationService.notify(transaction);
 
 		return newTransaction;
 	}
