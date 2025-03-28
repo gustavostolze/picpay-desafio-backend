@@ -1,6 +1,7 @@
 package com.gustavostolze.picpay_desafio_backend.transaction;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -26,7 +27,7 @@ public class Transaction {
 		this.id = id;
 		this.payer = payer;
 		this.payee = payee;
-		this.value = value;
+		this.value = value != null ? value.setScale(2, RoundingMode.UNNECESSARY) : BigDecimal.ZERO;
 		this.createdAt = createdAt;
 	}
 
@@ -59,7 +60,7 @@ public class Transaction {
 	}
 
 	public void setValue(BigDecimal value) {
-		this.value = value;
+		this.value = value != null ? value.setScale(2, RoundingMode.UNNECESSARY) : BigDecimal.ZERO;
 	}
 
 	public LocalDateTime getCreatedAt() {

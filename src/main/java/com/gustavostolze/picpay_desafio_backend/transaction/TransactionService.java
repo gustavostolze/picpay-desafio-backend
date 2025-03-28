@@ -49,7 +49,7 @@ public class TransactionService {
 
 		// notification async with kafka
 
-		// notificationService.notify(transaction);
+		notificationService.notify(transaction);
 
 		return newTransaction;
 	}
@@ -64,13 +64,13 @@ public class TransactionService {
 	private void validate(Transaction transaction) {
 		walletRepository.findById(transaction.getPayee())
 				.map((payee) -> walletRepository.findById(transaction.getPayer())
-						.map((payer) -> isValid(transaction, payee, payer))
-						.orElseThrow(() -> new InvalidTransactionException("Invalid PAYER ID!")))
-				.orElseThrow(() -> new InvalidTransactionException("Invalid PAYEE ID!"));
+						.map((payer) -> isValid(transaction, payer) ? transaction : null)
+						.orElseThrow(() -> new InvalidTransactionException("Invalid transaction - " + transaction)))
+				.orElseThrow(() -> new InvalidTransactionException("Invalid transaction - " + transaction));
 	}
 
-	private boolean isValid(Transaction transaction, Wallet payee, Wallet payer) {
-		return !payer.equals(payee) && payer.getType() != WalletType.MERCHANT.getValue()
+	private boolean isValid(Transaction transaction, Wallet payer) {
+		return !payer.getId().equals(transaction.getPayee()) && payer.getType() == WalletType.COMMON.getValue()
 				&& payer.getBalance().compareTo(transaction.getValue()) >= 0;
 	}
 }
