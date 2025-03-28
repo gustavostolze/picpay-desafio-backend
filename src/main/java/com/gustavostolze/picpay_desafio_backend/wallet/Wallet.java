@@ -78,11 +78,11 @@ public class Wallet {
 	}
 	
 	public Wallet debit(BigDecimal value) {
-		return new Wallet(null, fullName, document, email, balance.subtract(value), type);
+		return new Wallet(id, fullName, document, email, balance.subtract(value), type);
 	}
 	
 	public Wallet credit(BigDecimal value) {
-		return new Wallet(null, fullName, document, email, balance.add(value), type);
+		return new Wallet(id, fullName, document, email, balance.add(value), type);
 	}
 	
 	@Override
